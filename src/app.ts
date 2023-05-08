@@ -2,7 +2,7 @@ import express from "express";
 import morgan from 'morgan';
 import reRoutes from './routers/reRoutes';
 import bodyParser from 'body-parser';
-
+import * as executionTimeMiddlewares from './middlewares/executionTimeMiddleware';
 const app = express();
 
 
@@ -22,15 +22,16 @@ app.use(function (req, res, next) {
   next();
 });
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//app.use(limiter);
 
 app.use(morgan('dev'));
 
+app.use(executionTimeMiddlewares.startTimeMiddleware);
 app.use('/', reRoutes);
-
+app.use(executionTimeMiddlewares.endTimeMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`)
